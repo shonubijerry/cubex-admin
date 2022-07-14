@@ -29,6 +29,3 @@ To generate static project run `npm run generate`
 - [Buefy](https://buefy.org)
 - [Bulma](https://bulma.io)
 
-### Acknowlegedment
-
-[![Bulma](https://static.justboil.me/templates/archived/one-nuxt/repository-preview-hi-res.png)](https://justboil.me/bulma-admin-template/)
