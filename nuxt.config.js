@@ -14,26 +14,18 @@ export default {
   render: {
     static: {
       setHeaders(res) {
-        res.setHeader('Access-Control-Allow-Credentials', 'true')
+        res.setHeader('Access-Control-Allow-Credentials', true)
         res.setHeader('Access-Control-Allow-Origin', '*')
         res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp')
         res.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
-        res.setHeader(
-          'Access-Control-Allow-Methods',
-          'GET,OPTIONS,PATCH,DELETE,POST,PUT'
-        )
       },
     },
     dist: {
       setHeaders(res) {
-        res.setHeader('Access-Control-Allow-Credentials', 'true')
+        res.setHeader('Access-Control-Allow-Credentials', true)
         res.setHeader('Access-Control-Allow-Origin', '*')
         res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp')
         res.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
-        res.setHeader(
-          'Access-Control-Allow-Methods',
-          'GET,OPTIONS,PATCH,DELETE,POST,PUT'
-        )
       },
     },
   },
