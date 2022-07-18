@@ -1,34 +1,19 @@
 /*
  ** This is for GitHub pages
  */
+
+require('dotenv').config()
+
 const routerBase =
   process.env.DEPLOY_ENV === 'GH_PAGES'
     ? {
         router: {
-          base: '/admin-one-nuxt/',
+          base: '/cubex-admin/',
         },
       }
     : {}
 
 export default {
-  render: {
-    static: {
-      setHeaders(res) {
-        res.setHeader('Access-Control-Allow-Credentials', true)
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp')
-        res.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
-      },
-    },
-    dist: {
-      setHeaders(res) {
-        res.setHeader('Access-Control-Allow-Credentials', true)
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp')
-        res.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
-      },
-    },
-  },
   /*
    ** Concat router base setting
    */
