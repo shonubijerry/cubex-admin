@@ -20,8 +20,14 @@
         <b-table-column label="Name" field="name" sortable>
           {{ props.row.createdBy.name }}
         </b-table-column>
-        <b-table-column label="Crypto" field="name" sortable>
-          {{ props.row.crypto.name }} {{ props.row.crypto.network }}
+        <b-table-column label="GiftCard" field="name" sortable>
+          {{ props.row.giftCard.type }}
+        </b-table-column>
+        <b-table-column label="Unit" field="amount" sortable>
+          {{ props.row.amount }}
+        </b-table-column>
+        <b-table-column label="Rate" field="rate" sortable>
+          {{ props.row.rate }}
         </b-table-column>
         <b-table-column label="Status" field="status" sortable>
           {{ props.row.status }}
@@ -36,7 +42,7 @@
         <b-table-column custom-key="actions" class="is-actions-cell">
           <div class="buttons is-right">
             <nuxt-link
-              :to="`/crypto/transactions/${props.row.id}`"
+              :to="`/giftCard/transactions/${props.row.id}`"
               class="button is-small is-primary"
             >
               <b-icon icon="eye" size="is-small" />
@@ -70,7 +76,7 @@ import ModalBox from '@/components/ModalBox'
 import { isEmpty } from 'lodash'
 
 export default {
-  name: 'CryptoTransactionTable',
+  name: 'GiftCardTransactionTable',
   components: { ModalBox },
   props: {
     data: {

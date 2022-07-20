@@ -18,13 +18,16 @@
     >
       <template v-if="!isEmptyData" slot-scope="props">
         <b-table-column label="Name" field="name" sortable>
-          {{ props.row.createdBy.name }}
+          {{ props.row.name }}
         </b-table-column>
-        <b-table-column label="Crypto" field="name" sortable>
-          {{ props.row.crypto.name }} {{ props.row.crypto.network }}
+        <b-table-column label="Types">
+          {{ props.row.types | arrayToString }}
         </b-table-column>
-        <b-table-column label="Status" field="status" sortable>
-          {{ props.row.status }}
+        <b-table-column label="Countries">
+          {{ props.row.countries | arrayToString }}
+        </b-table-column>
+        <b-table-column label="Categories">
+          {{ props.row.categories.length }}
         </b-table-column>
         <b-table-column label="Created" field="createdAt" sortable>
           <small
@@ -36,10 +39,10 @@
         <b-table-column custom-key="actions" class="is-actions-cell">
           <div class="buttons is-right">
             <nuxt-link
-              :to="`/crypto/transactions/${props.row.id}`"
+              :to="`giftcard/${props.row.id}`"
               class="button is-small is-primary"
             >
-              <b-icon icon="eye" size="is-small" />
+              <b-icon icon="account-edit" size="is-small" />
             </nuxt-link>
           </div>
         </b-table-column>
@@ -70,7 +73,7 @@ import ModalBox from '@/components/ModalBox'
 import { isEmpty } from 'lodash'
 
 export default {
-  name: 'CryptoTransactionTable',
+  name: 'GiftCardTable',
   components: { ModalBox },
   props: {
     data: {

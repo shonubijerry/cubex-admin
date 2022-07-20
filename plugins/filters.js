@@ -170,3 +170,9 @@ Vue.filter('cryptoRate', (value) => {
 
   return `below ${value.mark} untis $${value.below}; above ${value.mark} units $${value.above}`
 })
+
+Vue.filter('arrayToString', (value) => {
+  if (isUndefined(value)) return ''
+
+  return value.join(', ')
+})
