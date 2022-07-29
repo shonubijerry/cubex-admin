@@ -176,3 +176,9 @@ Vue.filter('arrayToString', (value) => {
 
   return value.join(', ')
 })
+
+Vue.filter('cryptoNetwork', (value) => {
+  if (isUndefined(value)) return ''
+
+  return value.map((v) => v.name).join(' | ')
+})

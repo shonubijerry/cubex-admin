@@ -20,8 +20,8 @@
         <b-table-column label="Name" field="name" sortable>
           {{ props.row.name }}
         </b-table-column>
-        <b-table-column label="Rate" field="rate" sortable>
-          {{ props.row.rate | cryptoRate }}
+        <b-table-column label="Networks">
+          {{ props.row.networks | cryptoNetwork }}
         </b-table-column>
         <b-table-column label="Created" field="createdAt" sortable>
           <small

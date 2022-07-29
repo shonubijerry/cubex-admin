@@ -3,11 +3,61 @@
     <title-bar :title-stack="titleStack" />
     <section class="section is-main-section">
       <card-component
+        v-if="viewMode"
         class="has-table has-mobile-sort-spaced"
         title="Cryptos"
         icon="coin"
       >
         <CryptoTable :data="data" :is-loading="isLoading" />
+      </card-component>
+
+      <card-component
+        v-if="editRateMode"
+        :title="`Edit ${crypto.name} rate`"
+        icon="account-edit"
+        class="tile is-child"
+      >
+        <form @submit.prevent="submit">
+          <b-field label="Mark" message="Value required" horizontal>
+            <b-input
+              v-model="rate.mark"
+              placeholder="Rate above or below"
+              required
+            />
+          </b-field>
+          <b-field label="Below" message="Value required" horizontal>
+            <b-input
+              v-model="rate.below"
+              placeholder="Amount when below rate mark"
+              required
+            />
+          </b-field>
+          <b-field label="Above" message="Value required" horizontal>
+            <b-input
+              v-model.number="rate.above"
+              type="number"
+              placeholder="Amount when above rate mark"
+              required
+            />
+          </b-field>
+          <hr />
+          <b-field horizontal>
+            <b-button
+              horizontal
+              type="is-primary"
+              :loading="isLoading"
+              native-type="submit"
+              >Submit</b-button
+            >
+            <b-button
+              horizontal
+              type="is-danger"
+              :loading="isLoading"
+              @click="mode = 'view'"
+              >Cancel</b-button
+            >
+          </b-field>
+        </form>
       </card-component>
     </section>
   </div>
@@ -27,6 +77,7 @@ export default {
   data() {
     return {
       data: [],
+      mode: 'view',
       isLoading: false,
       paginated: false,
     }
@@ -34,6 +85,12 @@ export default {
   computed: {
     titleStack() {
       return ['Cryptos']
+    },
+    editRateMode() {
+      return this.mode === 'edit'
+    },
+    viewMode() {
+      return this.mode === 'view'
     },
   },
   async mounted() {
@@ -64,6 +121,30 @@ export default {
     },
     trashCancel() {
       this.isModalActive = false
+    },
+    async submit() {
+      this.isLoading = true
+
+      try {
+        const res = await this.$axios.$put(`/cryptos/rates/NGN`, {
+          ...this.rate,
+        })
+        const crypto = res.data
+
+        this.$buefy.snackbar.open({
+          message: 'Update successful',
+          queue: false,
+        })
+      } catch (err) {
+        console.log(err.message)
+        this.$buefy.snackbar.open({
+          message: 'Update error',
+          queue: false,
+        })
+      } finally {
+        this.isLoading = false
+        this.mode = 'view'
+      }
     },
   },
   head() {

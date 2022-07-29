@@ -4,7 +4,6 @@
     <section class="section is-main-section">
       <tiles>
         <card-component
-          v-if="viewMode"
           :title="crypto.name | capitalize"
           icon="coin"
           class="tile is-child"
@@ -60,54 +59,6 @@
             <div class="column">{{ crypto.createdAt | displayDate }}</div>
           </div>
         </card-component>
-        <card-component
-          v-if="editRateMode"
-          :title="`Edit ${crypto.name} rate`"
-          icon="account-edit"
-          class="tile is-child"
-        >
-          <form @submit.prevent="submit">
-            <b-field label="Mark" message="Value required" horizontal>
-              <b-input
-                v-model="rate.mark"
-                placeholder="Rate above or below"
-                required
-              />
-            </b-field>
-            <b-field label="Below" message="Value required" horizontal>
-              <b-input
-                v-model="rate.below"
-                placeholder="Amount when below rate mark"
-                required
-              />
-            </b-field>
-            <b-field label="Above" message="Value required" horizontal>
-              <b-input
-                v-model.number="rate.above"
-                type="number"
-                placeholder="Amount when above rate mark"
-                required
-              />
-            </b-field>
-            <hr />
-            <b-field horizontal>
-              <b-button
-                horizontal
-                type="is-primary"
-                :loading="isLoading"
-                native-type="submit"
-                >Submit</b-button
-              >
-              <b-button
-                horizontal
-                type="is-danger"
-                :loading="isLoading"
-                @click="mode = 'view'"
-                >Cancel</b-button
-              >
-            </b-field>
-          </form>
-        </card-component>
       </tiles>
 
       <b-modal :active.sync="isImageModalActive" :width="400">
@@ -137,11 +88,13 @@ export default {
   async asyncData({ app, params }) {
     try {
       const res = await app.$axios.$get(`/cryptos/one/${params.id}`)
+      const ratesRes = await app.$axios.$get(`/cryptos/rates`)
       const crypto = res.data
+      const rate = ratesRes.data
 
       return {
         crypto,
-        rate: crypto.rate,
+        rate: rate.value['NGN'],
       }
     } catch (err) {
       console.log(err.message)
@@ -154,7 +107,6 @@ export default {
       form: {},
       isLoading: false,
       isImageModalActive: false,
-      mode: 'view',
       currentBarcode: '',
     }
   },
@@ -168,40 +120,8 @@ export default {
     titleStack() {
       return ['Crypto', this.cryptoName]
     },
-    editRateMode() {
-      return this.mode === 'edit'
-    },
-    viewMode() {
-      return this.mode === 'view'
-    },
   },
   methods: {
-    async submit() {
-      this.isLoading = true
-
-      try {
-        const res = await this.$axios.$put(`/cryptos/one/${this.pageId}`, {
-          rate: this.rate,
-        })
-        const crypto = res.data
-
-        this.crypto = crypto
-        this.rate = crypto.rate
-        this.$buefy.snackbar.open({
-          message: 'Update successful',
-          queue: false,
-        })
-      } catch (err) {
-        console.log(err.message)
-        this.$buefy.snackbar.open({
-          message: 'Update error',
-          queue: false,
-        })
-      } finally {
-        this.isLoading = false
-        this.mode = 'view'
-      }
-    },
     viewBarcode(barcodeURL) {
       this.currentBarcode = barcodeURL
       this.isImageModalActive = true
