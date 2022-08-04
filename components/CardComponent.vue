@@ -10,7 +10,7 @@
         href="#"
         class="card-header-icon"
         aria-label="more options"
-        @click.prevent="headerIconClick"
+        @click.prevent="$emit('header-icon-click')"
       >
         <b-icon :icon="headerIcon" custom-size="default" />
       </a>
@@ -36,11 +36,6 @@ export default {
     headerIcon: {
       type: String,
       default: null,
-    },
-  },
-  methods: {
-    headerIconClick() {
-      this.$emit('header-icon-click')
     },
   },
 }

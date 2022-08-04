@@ -7,13 +7,15 @@
         class="has-table has-mobile-sort-spaced"
         title="Cryptos"
         icon="coin"
+        headerIcon="lead-pencil"
+        @header-icon-click="changeMode('edit')"
       >
         <CryptoTable :data="data" :is-loading="isLoading" />
       </card-component>
 
       <card-component
         v-if="editRateMode"
-        :title="`Edit ${crypto.name} rate`"
+        :title="`Edit Crypto rate`"
         icon="account-edit"
         class="tile is-child"
       >
@@ -74,9 +76,24 @@ export default {
     CardComponent,
     CryptoTable,
   },
+  async asyncData({ app }) {
+    try {
+      const res = await app.$axios.$get('/cryptos')
+      const ratesRes = await app.$axios.$get(`/cryptos/rates`)
+      const rate = ratesRes.data
+
+      return {
+        data: res.data,
+        rate: rate.value['NGN'],
+      }
+    } catch (err) {
+      console.log(err.message)
+    }
+  },
   data() {
     return {
       data: [],
+      rate: {},
       mode: 'view',
       isLoading: false,
       paginated: false,
@@ -93,21 +110,7 @@ export default {
       return this.mode === 'view'
     },
   },
-  async mounted() {
-    await this.fetchData()
-  },
   methods: {
-    async fetchData() {
-      try {
-        this.isLoading = true
-        const res = await this.$axios.$get('/cryptos')
-        this.data = res.data
-      } catch (err) {
-        console.log(err.message)
-      } finally {
-        this.isLoading = false
-      }
-    },
     trashModal(trashObject) {
       this.trashObject = trashObject
       this.isModalActive = true
@@ -127,7 +130,7 @@ export default {
 
       try {
         const res = await this.$axios.$put(`/cryptos/rates/NGN`, {
-          ...this.rate,
+          ...this.formatRate(),
         })
         const crypto = res.data
 
@@ -145,6 +148,15 @@ export default {
         this.isLoading = false
         this.mode = 'view'
       }
+    },
+    changeMode(mode) {
+      this.mode = mode
+    },
+    formatRate() {
+      Object.keys(this.rate).forEach(
+        (key) => (this.rate[key] = parseFloat(this.rate[key]))
+      )
+      return this.rate
     },
   },
   head() {

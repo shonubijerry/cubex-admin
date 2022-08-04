@@ -1,8 +1,8 @@
 <template>
   <b-field class="file">
     <b-upload v-model="file" :accept="accept" @input="upload">
-      <a class="button is-primary">
-        <b-icon icon="upload" custom-size="default"></b-icon>
+      <a :class="`button is-primary ${size}`">
+        <b-icon icon="upload" :custom-size="size"></b-icon>
         <span>{{ buttonLabel }}</span>
       </a>
     </b-upload>
@@ -18,6 +18,10 @@ export default {
       type: String,
       default: null,
     },
+    size: {
+      type: String,
+      default: 'default',
+    },
   },
   data() {
     return {
@@ -31,28 +35,23 @@ export default {
     },
   },
   methods: {
-    upload(file) {
-      this.$emit('input', file)
-      // Use this as an example for handling file uploads
-      // let formData = new FormData()
-      // formData.append('file', file)
+    async upload(file) {
+      try {
+        let formData = new FormData()
+        formData.append('upload', file)
 
-      // axios
-      //   .post(window.routeMediaStore, formData, {
-      //     headers: {
-      //       'Content-Type': 'multipart/form-data'
-      //     },
-      //     onUploadProgress: this.progressEvent
-      //   })
-      //   .then(r => {
-      //
-      //   })
-      //   .catch(err => {
-      //     this.$buefy.toast.open({
-      //       message: `Error: ${err.message}`,
-      //       type: 'is-danger'
-      //     })
-      //   })
+        const config = {
+          header: {
+            'Content-Type': 'multipart/form-data',
+          },
+          onUploadProgress: this.progressEvent,
+        }
+        const res = await this.$axios.$post(`/file/upload`, formData, config)
+
+        this.$emit('uploaded-file', res.data)
+      } catch (err) {
+        console.log(err.message)
+      }
     },
     progressEvent(progressEvent) {
       this.uploadPercent = Math.round(
