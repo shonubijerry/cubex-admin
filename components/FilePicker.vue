@@ -22,6 +22,10 @@ export default {
       type: String,
       default: 'default',
     },
+    uploadAfterPick: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -36,6 +40,10 @@ export default {
   },
   methods: {
     async upload(file) {
+      if (!this.uploadAfterPick) {
+        this.$emit('pending-upload', file)
+        return
+      }
       try {
         let formData = new FormData()
         formData.append('upload', file)

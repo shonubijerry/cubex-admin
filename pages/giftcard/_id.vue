@@ -31,46 +31,44 @@
 
           <hr />
           <b-field label="Categories"></b-field>
-          <div
-            v-for="(subCategory, index) in categories"
-            :key="index"
-            class="columns"
+          <b-table
+            :loading="isLoading"
+            :striped="true"
+            :hoverable="true"
+            default-sort="name"
+            :data="giftcard.categories"
           >
-            <div
-              v-for="(category, index) in subCategory"
-              :key="index"
-              class="column"
-            >
-              {{ category }}
-            </div>
-          </div>
+            <template v-if="giftcard.categories.length" slot-scope="props">
+              <b-table-column label="Name" field="name" sortable>
+                {{ props.row.name }}
+              </b-table-column>
+              <b-table-column label="Rate" field="rate" sortable>
+                {{ props.row.rate }}
+              </b-table-column>
+              <b-table-column custom-key="actions" class="is-actions-cell">
+                <div class="buttons is-right">
+                  <b-button
+                    icon-left="account-edit"
+                    type="is-primary"
+                    size="is-small"
+                    @click="openEdit(props.row)"
+                  />
+                </div>
+              </b-table-column>
+            </template>
+          </b-table>
         </card-component>
-        <!-- <card-component
+        <card-component
           v-if="editRateMode"
-          :title="`Edit ${giftcard.name} rate`"
+          :title="`Edit ${selectedCategory.name}`"
           icon="account-edit"
           class="tile is-child"
         >
           <form @submit.prevent="submit">
-            <b-field label="Mark" message="Value required" horizontal>
+            <b-field label="Rate" message="Value required" horizontal>
               <b-input
-                v-model="rate.mark"
-                placeholder="Rate above or below"
-                required
-              />
-            </b-field>
-            <b-field label="Below" message="Value required" horizontal>
-              <b-input
-                v-model="rate.below"
-                placeholder="Amount when below rate mark"
-                required
-              />
-            </b-field>
-            <b-field label="Above" message="Value required" horizontal>
-              <b-input
-                v-model.number="rate.above"
-                type="number"
-                placeholder="Amount when above rate mark"
+                v-model="selectedCategory.rate"
+                placeholder="Input rate"
                 required
               />
             </b-field>
@@ -86,13 +84,13 @@
               <b-button
                 horizontal
                 type="is-danger"
-                :loading="isLoading"
+                :disabled="isLoading"
                 @click="mode = 'view'"
                 >Cancel</b-button
               >
             </b-field>
           </form>
-        </card-component> -->
+        </card-component>
       </tiles>
 
       <b-modal :active.sync="isImageModalActive" :width="400">
@@ -135,7 +133,7 @@ export default {
   data() {
     return {
       giftcard: {},
-      rate: {},
+      selectedCategory: {},
       form: {},
       isLoading: false,
       isImageModalActive: false,
@@ -159,22 +157,25 @@ export default {
     viewMode() {
       return this.mode === 'view'
     },
-    categories() {
-      return chunk(this.giftcard.categories, 2)
-    },
   },
   methods: {
     async submit() {
       this.isLoading = true
 
+      const categories = this.giftcard.categories.map((c) => {
+        if (c._id === this.selectedCategory._id) {
+          return this.selectedCategory
+        }
+        return c
+      })
+
       try {
         const res = await this.$axios.$put(`/giftcards/one/${this.pageId}`, {
-          rate: this.rate,
+          categories,
         })
         const giftcard = res.data
 
         this.giftcard = giftcard
-        this.rate = giftcard.rate
         this.$buefy.snackbar.open({
           message: 'Update successful',
           queue: false,
@@ -187,12 +188,17 @@ export default {
         })
       } finally {
         this.isLoading = false
+        this.selectedCategory = null
         this.mode = 'view'
       }
     },
     viewBarcode(barcodeURL) {
       this.currentBarcode = barcodeURL
       this.isImageModalActive = true
+    },
+    openEdit(prop) {
+      this.selectedCategory = prop
+      this.mode = 'edit'
     },
   },
 }

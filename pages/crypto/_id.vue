@@ -14,29 +14,6 @@
             class="image has-max-width is-aligned-center"
           />
           <hr />
-          <b-field label="Networks"></b-field>
-          <div
-            v-for="(network, index) in crypto.networks"
-            :key="index"
-            class="columns"
-          >
-            <div class="column is-one-fifth">{{ network.name }}</div>
-            <div class="column">{{ network.address }}n</div>
-            <div class="column">
-              <b-button
-                icon-left="barcode"
-                type="is-primary"
-                size="is-small"
-                @click="viewBarcode(network.barcode)"
-              />
-              <b-button
-                icon-left="lead-pencil"
-                type="is-primary"
-                size="is-small"
-                @click="editNetwork(network)"
-              />
-            </div>
-          </div>
 
           <b-field label="Rates"></b-field>
           <div class="columns">
@@ -48,13 +25,46 @@
             <div class="column">${{ rate.above }}</div>
           </div>
 
-          <hr />
           <div class="columns">
             <div class="column is-one-fifth">
               <strong>Created</strong>
             </div>
             <div class="column">{{ crypto.createdAt | displayDate }}</div>
           </div>
+
+          <b-field label="Networks"></b-field>
+          <b-table
+            :loading="isLoading"
+            :striped="true"
+            :hoverable="true"
+            default-sort="name"
+            :data="crypto.networks"
+          >
+            <template v-if="crypto.networks.length" slot-scope="props">
+              <b-table-column label="Name" field="name" sortable>
+                {{ props.row.name }}
+              </b-table-column>
+              <b-table-column label="Address" field="address" sortable>
+                {{ props.row.address }}
+              </b-table-column>
+              <b-table-column custom-key="actions" class="is-actions-cell">
+                <div class="buttons is-right">
+                  <b-button
+                    icon-left="barcode"
+                    type="is-primary"
+                    size="is-small"
+                    @click="viewBarcode(props.row.barcode)"
+                  />
+                  <b-button
+                    icon-left="lead-pencil"
+                    type="is-primary"
+                    size="is-small"
+                    @click="editNetwork(props.row)"
+                  />
+                </div>
+              </b-table-column>
+            </template>
+          </b-table>
         </card-component>
 
         <card-component
@@ -75,6 +85,8 @@
               <file-picker
                 accept="image/*"
                 size="is-small"
+                :uploadAfterPick="false"
+                @pending-upload="setFileToUpload"
                 @uploaded-file="updateSelectedNetwork"
               />
             </b-field>
@@ -90,7 +102,7 @@
               <b-button
                 horizontal
                 type="is-danger"
-                :loading="isLoading"
+                :disabled="isLoading"
                 @click="mode = ''"
                 >Cancel</b-button
               >
@@ -150,6 +162,7 @@ export default {
       currentBarcode: '',
       mode: '',
       selectedNetwork: null,
+      fileToUpload: null,
     }
   },
   computed: {
@@ -175,20 +188,35 @@ export default {
       this.selectedNetwork = network
       this.mode = 'edit'
     },
+    setFileToUpload(file) {
+      this.fileToUpload = file
+    },
     updateSelectedNetwork({ url }) {
       this.selectedNetwork.barcode = url || this.selectedNetwork.barcode
     },
     async submit() {
       this.isLoading = true
 
-      const networks = this.crypto.networks.map((n) => {
-        if (n.name === this.selectedNetwork.name) {
-          return this.selectedNetwork
-        }
-        return n
-      })
-
       try {
+        if (this.fileToUpload) {
+          let formData = new FormData()
+          formData.append('upload', this.fileToUpload)
+
+          const config = {
+            header: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+          const res = await this.$axios.$post(`/file/upload`, formData, config)
+          this.updateSelectedNetwork(res.data)
+        }
+
+        const networks = this.crypto.networks.map((n) => {
+          if (n.name === this.selectedNetwork.name) {
+            return this.selectedNetwork
+          }
+          return n
+        })
         const res = await this.$axios.$put(`/cryptos/one/${this.pageId}`, {
           networks,
         })
@@ -207,6 +235,8 @@ export default {
         })
       } finally {
         this.isLoading = false
+        this.fileToUpload = null
+        this.selectedNetwork = null
         this.mode = 'view'
       }
     },

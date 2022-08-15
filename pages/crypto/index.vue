@@ -8,6 +8,7 @@
         title="Cryptos"
         icon="coin"
         headerIcon="lead-pencil"
+        headerIconTitle="Edit Rate"
         @header-icon-click="changeMode('edit')"
       >
         <CryptoTable :data="data" :is-loading="isLoading" />

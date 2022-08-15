@@ -13,6 +13,7 @@
         @click.prevent="$emit('header-icon-click')"
       >
         <b-icon :icon="headerIcon" custom-size="default" />
+        {{ headerIconTitle }}
       </a>
     </header>
     <div class="card-content">
@@ -34,6 +35,10 @@ export default {
       default: null,
     },
     headerIcon: {
+      type: String,
+      default: null,
+    },
+    headerIconTitle: {
       type: String,
       default: null,
     },
