@@ -10,7 +10,7 @@
           class="tile is-child"
         >
           <user-avatar
-            :avatar="transaction.image?.[0]"
+            :avatar="transaction.image[0]"
             class="image has-max-width is-aligned-center"
             @click="viewImages()"
           />
@@ -35,8 +35,14 @@
             <div class="column">{{ transaction.rate }}</div>
           </div>
           <div class="columns">
+            <div class="column is-one-fifth">Quantity</div>
+            <div class="column">{{ transaction.quantity }}</div>
+          </div>
+          <div class="columns">
             <div class="column is-one-fifth">Expected Amount</div>
-            <div class="column">{{ giftCard.address }}</div>
+            <div class="column">
+              {{ transaction.amountExpected | currencySymbol }}
+            </div>
           </div>
           <div class="columns">
             <div class="column is-one-fifth">GiftCard Type</div>
@@ -79,6 +85,14 @@
                 v-model.number="update.rate"
                 placeholder="transaction rate"
                 required
+              />
+            </b-field>
+            <b-field label="Quantity" horizontal>
+              <b-input
+                v-model.number="update.quantity"
+                placeholder="Number of cards"
+                required
+                type="number"
               />
             </b-field>
             <b-field label="Status" horizontal>
@@ -194,6 +208,11 @@ export default {
     async submit() {
       this.isLoading = true
 
+      const { quantity, rate } = this.update
+      const { amount } = this.transaction
+
+      this.update.amountExpected = rate * quantity * amount
+
       try {
         const res = await this.$axios.$put(`/giftCards/update/${this.pageId}`, {
           ...this.update,
@@ -221,6 +240,8 @@ export default {
       this.update = {
         rate: this.transaction.rate,
         status: this.transaction.status,
+        quantity: this.transaction.quantity,
+        amountExpected: this.transaction.amountExpected,
       }
       this.mode = 'edit'
     },

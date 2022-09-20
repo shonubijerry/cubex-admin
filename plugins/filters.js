@@ -126,7 +126,7 @@ Vue.filter('currency', (value) => {
   }
   const formatter = new Intl.NumberFormat('en', {
     style: 'currency',
-    currency: COUNTRY.code,
+    currency: COUNTRY.code || 'NGN',
   })
   return formatter.format(value)
 })
@@ -134,9 +134,12 @@ Vue.filter('currency', (value) => {
 Vue.filter('currencySymbol', (value) => {
   const COUNTRY = CacheService.get(CacheService.keys.COUNTRY)
 
-  if (isUndefined(value) || !isNumber(value)) return `${COUNTRY.symbol}0`
+  if (isUndefined(value) || !isNumber(value))
+    return `${(COUNTRY || { symbol: '₦' }).symbol}0`
   const newValue = parseFloat(value.toFixed(2))
-  return `${COUNTRY.symbol}${newValue.toLocaleString('en')}`
+  return `${
+    (COUNTRY || { symbol: '₦' }).symbol || '₦'
+  }${newValue.toLocaleString('en')}`
 })
 
 Vue.filter('currencyStat', (value) => {

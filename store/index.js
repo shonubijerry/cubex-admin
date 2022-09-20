@@ -1,4 +1,5 @@
 import { isEmpty } from 'lodash'
+import CacheService from '../services/CacheService'
 
 // const cookieparser = require('cookieparser')
 
@@ -28,6 +29,9 @@ export const mutations = {
   },
   set_country(state, data) {
     state.country = data
+
+    // this is only implemented for cases where we cannot use or access Vuex store.
+    CacheService.set(CacheService.keys.COUNTRY, data)
   },
 
   /* User */
@@ -95,6 +99,8 @@ export const actions = {
     const lastPage = null
 
     commit('set_last_page', lastPage)
+    const country = this.$cookiz.get('country')
+    commit('set_country', country)
   },
   async login({ commit }, credentials) {
     try {

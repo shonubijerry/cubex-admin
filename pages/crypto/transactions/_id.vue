@@ -10,7 +10,7 @@
           class="tile is-child"
         >
           <user-avatar
-            :avatar="transaction.image?.[0]"
+            :avatar="transaction.image[0]"
             class="image has-max-width is-aligned-center"
             @click="viewImages()"
           />
