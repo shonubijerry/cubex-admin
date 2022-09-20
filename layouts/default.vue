@@ -62,43 +62,43 @@ export default {
             updateMark: true,
           },
         ],
-        'Users',
-        [
-          {
-            to: '/tables',
-            label: 'List',
-            icon: 'table',
-            updateMark: true,
-          },
-          {
-            to: '/profile',
-            label: 'Profile',
-            icon: 'account-circle',
-          },
-        ],
-        'Not Used',
-        [
-          {
-            to: '/forms',
-            label: 'Forms',
-            icon: 'square-edit-outline',
-          },
-          // {
-          //   label: 'Submenus',
-          //   subLabel: 'Submenus Example',
-          //   icon: 'view-list',
-          //   menu: [
-          //     {
-          //       href: '#void',
-          //       label: 'Sub-item One',
-          //     },
-          //     {
-          //       href: '#void',
-          //       label: 'Sub-item Two',
-          //     },
-          //   ],
-          // },
-        ],
+        // 'Users',
+        // [
+        //   {
+        //     to: '/tables',
+        //     label: 'List',
+        //     icon: 'table',
+        //     updateMark: true,
+        //   },
+        //   {
+        //     to: '/profile',
+        //     label: 'Profile',
+        //     icon: 'account-circle',
+        //   },
+        // ],
+        // 'Not Used',
+        // [
+        //   {
+        //     to: '/forms',
+        //     label: 'Forms',
+        //     icon: 'square-edit-outline',
+        //   },
+        // {
+        //   label: 'Submenus',
+        //   subLabel: 'Submenus Example',
+        //   icon: 'view-list',
+        //   menu: [
+        //     {
+        //       href: '#void',
+        //       label: 'Sub-item One',
+        //     },
+        //     {
+        //       href: '#void',
+        //       label: 'Sub-item Two',
+        //     },
+        //   ],
+        // },
+        // ],
       ]
     },
   },

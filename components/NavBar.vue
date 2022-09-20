@@ -41,14 +41,14 @@
               <b-icon icon="account" custom-size="default" />
               <span>My Profile</span>
             </nuxt-link>
-            <a class="navbar-item">
+            <!-- <a class="navbar-item">
               <b-icon icon="settings" custom-size="default"></b-icon>
               <span>Settings</span>
             </a>
             <a class="navbar-item">
               <b-icon icon="email" custom-size="default"></b-icon>
               <span>Messages</span>
-            </a>
+            </a> -->
             <hr class="navbar-divider" />
             <a class="navbar-item" @click="logout">
               <b-icon icon="logout" custom-size="default"></b-icon>

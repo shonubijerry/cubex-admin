@@ -141,12 +141,10 @@ export default {
     try {
       const res = await app.$axios.$get(`/cryptos/one/${params.id}`)
       const ratesRes = await app.$axios.$get(`/cryptos/rates`)
-      const crypto = res.data
-      const rate = ratesRes.data
 
       return {
-        crypto,
-        rate: rate.value['NGN'],
+        crypto: res.data,
+        rate: ratesRes.data,
       }
     } catch (err) {
       console.log(err.message)
